@@ -27,7 +27,7 @@ public class MasterController {
                     case 4 -> asistenteController.crear();
                     case 5 -> asistenteController.eliminar();
                     case 6 -> catalogoController.regalosNoPedidos();
-                    case 7 -> catalogoController.regalosPorCiudad();
+                    case 7 -> cartaController.regalosPorCiudad();
                     case 8 -> cartaController.infantesPorMomentos();
                     case 9 -> catalogoController.regalosPorTresLetras();
                     case 12 -> view.info("!Ho ho ho, ahora me voy yo!");

@@ -1,12 +1,18 @@
 package controller;
 
+import entity.Carta;
 import entity.Catalogo;
+import entity.Infante;
+import entity.RegalosPorCarta;
+import exceptions.ReglaNegocioExcepcion;
 import service.CartaService;
 import service.CatalogoService;
 import service.InfanteService;
 import view.ConsolaView;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,14 +32,20 @@ public class CartaController {
     void crear() {
         String nombreInfante = view.pedirString("Nombre de infante");
         String apellidoInfante = view.pedirString("Apellido de infante");
-        infanteService.crear(nombreInfante, apellidoInfante);
+        Infante infante = infanteService.crear(nombreInfante, apellidoInfante);
         String asistente = view.pedirString("Asistente");
-        String momentoString = view.pedirString("Momento de entrega");
-        LocalDateTime momento = LocalDateTime.parse(momentoString);
+        String momentoString = view.pedirString("Momento de entrega (formato dd/MM/yyyy HH:mm:ss)");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime momento;
+        try {
+            momento = LocalDateTime.parse(momentoString, formatter);
+        } catch (DateTimeParseException e) {
+            throw new ReglaNegocioExcepcion("Formato de tiempo no valido, intente de nuevo con dd/MM/yyyy HH:mm:ss");
+        }
         String ciudad = view.pedirString("Ciudad");
         String direccion = view.pedirString("Direccion");
         List<Catalogo> regalos = new ArrayList<>();
-        List<Integer> cantidades = new ArrayList<>();
+        ArrayList<Integer> cantidades = new ArrayList<>();
         while (true) {
             view.mostrarCatalogo(catalogoService.buscarTodosRegalos());
             int idRegalo = view.pedirInt("Id de regalo, seleccione de los de arriba (Introduzca 0 para salir)");
@@ -62,16 +74,49 @@ public class CartaController {
                     view.error("El regalo ya se ha pedido, pruebe otro");
                     continue;
                 } else {
-                    cantidad = view.pedirInt("Introduzca")
+                    int cantidad;
+                    while (true) {
+                        cantidad = view.pedirInt("Introduzca la cantidad de " + regalo.getNombreRegalo() + " que desea");
+                        if (cantidad <= 0) {
+                            view.info("El cantidad debe ser mayor que 0");
+                            continue;
+                        } else {
+                            break;
+                        }
+                    }
+                    cantidades.add(cantidad);
                     regalos.add(regalo);
                 }
-
             }
         }
-
-
+        service.crear(infante.getIdInfante(), asistente, momento, ciudad, direccion, regalos, cantidades);
+        view.info("La carta de " + infante.getNombre() + " se ha añadido correctamente");
     }
 
     void infantesPorMomentos() {
+        String momentoString = view.pedirString("Momento de entrega (Formato: dd/MM/yyyy HH:mm:ss)");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime momento;
+        try {
+            momento = LocalDateTime.parse(momentoString, formatter);
+            service.cartasPorMomentos(momento);
+        } catch (DateTimeParseException e) {
+            throw new ReglaNegocioExcepcion("Formato de tiempo no valido, intente de nuevo con dd/MM/yyyy HH:mm:ss");
+        }
+    }
+
+    void regalosPorCiudad() {
+        String ciudad = view.pedirString("Ciudad a buscar");
+        List<Carta> cartas = service.cartasPorCiudad(ciudad);
+        for (Carta c : cartas) {
+            view.info("------------------------------------");
+            view.info("Carta de " + c.getInfante().getNombre() + " desde la ciudad de " + c.getCiudad() + "\n");
+            for (RegalosPorCarta rpc : c.getRegalos()){
+                Catalogo regalo = rpc.getRegalo();
+                view.info("- " + regalo.getNombreRegalo()
+                + " | Cantidad: " + rpc.getCantidad());
+            }
+            view.info("------------------------------------");
+        }
     }
 }

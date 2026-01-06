@@ -66,6 +66,63 @@ public class CatalogoService {
         }
     }
 
+    public boolean actualizarEdadMinima(Integer id, int edadMinima) {
+        if (edadMinima <= 0 || edadMinima > 99) {
+            throw new ReglaNegocioExcepcion("La edad mínima debe estar entre 1 e 99");
+        }
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        Catalogo catalogo = null;
+        try {
+            tx.begin();
+            CatalogoRepository repo = new CatalogoRepository(em);
+            catalogo = repo.buscarPorId(id);
+            if (catalogo == null) {
+                throw new ReglaNegocioExcepcion("No existe el regalo con el id: " + id);
+            }
+            catalogo.setEdadMinima(edadMinima);
+            repo.actualizar(catalogo);
+            tx.commit();
+            return true;
+        } catch (Exception ex) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw new ReglaNegocioExcepcion("Error actualizando regalo" + ex.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+
+    public boolean actualizarDescripcion(Integer id, String descripcion) {
+        if (descripcion == null || descripcion.isEmpty()) {
+            throw new ReglaNegocioExcepcion("Debe ingresar el descripcion del regalo");
+        }
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        Catalogo catalogo = null;
+        try {
+            tx.begin();
+            CatalogoRepository repo = new CatalogoRepository(em);
+            catalogo = repo.buscarPorId(id);
+            if (catalogo == null) {
+                throw new ReglaNegocioExcepcion("No existe el regalo con el id: " + id);
+            }
+            catalogo.setDescripcion(descripcion);
+            repo.actualizar(catalogo);
+            tx.commit();
+            return true;
+        } catch (Exception ex) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw new ReglaNegocioExcepcion("Error actualizando regalo" + ex.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+
+
     public Catalogo buscarPorId(Integer id) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -95,6 +152,7 @@ public class CatalogoService {
             em.close();
         }
     }
+
     public List<Catalogo> buscarPorTresLetras(String letras) {
         if (!letras.matches("[a-zA-Z]{3}")) {
             throw new ReglaNegocioExcepcion("Introduzca 3 letras sin caracteres especiales");
