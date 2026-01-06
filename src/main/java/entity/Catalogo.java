@@ -3,6 +3,8 @@ package entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "catalogo")
@@ -22,6 +24,10 @@ public class Catalogo implements Serializable {
 
     @Column(name = "descripcion", length = 300, nullable = false)
     private String descripcion;
+
+    @OneToMany(mappedBy = "regalo")
+    private List<RegalosPorCarta> pedidos = new ArrayList<>();
+
 
     public Catalogo() {
     }

@@ -1,9 +1,12 @@
 package view;
 
+import entity.Catalogo;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsolaView {
@@ -66,6 +69,15 @@ public class ConsolaView {
             } catch (NumberFormatException e) {
                 System.out.println("Introduce un número entero válido");
             }
+        }
+    }
+
+    public void mostrarCatalogo(List<Catalogo> regalos) {
+        System.out.println("Catalogo");
+        if (regalos.isEmpty()) {
+            System.out.println(("sin registros"));
+        } else {
+            regalos.forEach(System.out::println);
         }
     }
 }

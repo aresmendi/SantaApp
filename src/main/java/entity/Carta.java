@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cartas")
@@ -31,24 +33,34 @@ public class Carta implements Serializable {
     @Column(name = "direccion",length = 100,nullable = false)
     private String direccion;
 
+    @OneToMany(
+            mappedBy = "carta",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<RegalosPorCarta> regalos = new ArrayList<>();
+
+
     public Carta() {
     }
 
-    public Carta(Infante infante, Asistente asistente, LocalDateTime momentoEntrega, String ciudad, String direccion) {
+    public Carta(Infante infante, Asistente asistente, LocalDateTime momentoEntrega, String ciudad, String direccion, List<RegalosPorCarta> rpc) {
         this.infante = infante;
         this.asistente = asistente;
         this.momentoEntrega = momentoEntrega;
         this.ciudad = ciudad;
         this.direccion = direccion;
+        this.regalos = rpc;
     }
 
-    public Carta(int id, Infante infante, Asistente asistente, LocalDateTime momentoEntrega, String ciudad, String direccion) {
+    public Carta(int id, Infante infante, Asistente asistente, LocalDateTime momentoEntrega, String ciudad, String direccion, List<RegalosPorCarta> rpc) {
         this.id = id;
         this.infante = infante;
         this.asistente = asistente;
         this.momentoEntrega = momentoEntrega;
         this.ciudad = ciudad;
         this.direccion = direccion;
+        this.regalos = rpc;
     }
 
     public int getId() {
@@ -97,5 +109,23 @@ public class Carta implements Serializable {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public List<RegalosPorCarta> getRegalos() {
+        return regalos;
+    }
+
+    public void setRegalos(List<RegalosPorCarta> regalos) {
+        this.regalos = regalos;
+    }
+
+    //Métodos auxiliares para lo de los regalos
+    public void agregarRegalosPorCarta(RegalosPorCarta rpc) {
+        regalos.add(rpc);
+        rpc.setCarta(this);
+    }
+    public void eliminarRegalosPorCarta(RegalosPorCarta rpc) {
+        regalos.remove(rpc);
+        rpc.setCarta(null);
     }
 }

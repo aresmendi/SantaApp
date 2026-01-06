@@ -34,4 +34,12 @@ public class CatalogoRepository {
     public List<Catalogo> buscarTodosRegalosCatalogo() {
         return em.createQuery("SELECT DISTINCT r FROM Catalogo r", Catalogo.class).getResultList();
     }
+
+    public List<Catalogo> buscarTodosRegalosNoPedidos() {
+        return em.createQuery("SELECT DISTINCT r FROM Catalogo r LEFT JOIN FETCH r.pedidos p WHERE p IS NULL ", Catalogo.class).getResultList();
+    }
+
+    public List<Catalogo> buscarPorTresLetras(String letras) {
+        return em.createQuery("SELECT DISTINCT r FROM Catalogo r WHERE r.nombreRegalo LIKE LOWER(:letras)", Catalogo.class).setParameter("letras", "%" + letras + "%").getResultList();
+    }
 }
