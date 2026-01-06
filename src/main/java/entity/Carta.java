@@ -18,7 +18,7 @@ public class Carta implements Serializable {
     @JoinColumn(name = "idInfanteAso", unique = true, nullable = false)
     private Infante infante;
 
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "nombreAsistente")
     private Asistente asistente;
 
