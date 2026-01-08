@@ -32,9 +32,9 @@ public class MasterController {
                     case 9 -> catalogoController.regalosPorTresLetras();
                     case 12 -> view.info("!Ho ho ho, ahora me voy yo!");
                 }
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 view.error("Introduzca un número válido");
             }
-        } while (op != 0);
+        } while (op != 12);
     }
 }

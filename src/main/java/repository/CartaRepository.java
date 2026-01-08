@@ -30,7 +30,7 @@ public class CartaRepository {
     }
 
     public List<Carta> buscarPorCiudad(String ciudad) {
-        return em.createQuery("SELECT DISTINCT r FROM Carta c LEFT JOIN FETCH c.regalos r LEFT JOIN FETCH r.regalo WHERE c.ciudad = :ciudad", Carta.class).setParameter("ciudad", ciudad).getResultList();
+        return em.createQuery("SELECT DISTINCT c FROM Carta c LEFT JOIN FETCH c.regalos r LEFT JOIN FETCH r.regalo WHERE c.ciudad = :ciudad", Carta.class).setParameter("ciudad", ciudad).getResultList();
     }
 
     public List<Carta> buscarPorMomento(LocalDateTime momento) {

@@ -40,7 +40,8 @@ public class CartaController {
         try {
             momento = LocalDateTime.parse(momentoString, formatter);
         } catch (DateTimeParseException e) {
-            throw new ReglaNegocioExcepcion("Formato de tiempo no valido, intente de nuevo con dd/MM/yyyy HH:mm:ss");
+            view.error("Formato de tiempo no valido, intente de nuevo con dd/MM/yyyy HH:mm:ss");
+            return;
         }
         String ciudad = view.pedirString("Ciudad");
         String direccion = view.pedirString("Direccion");
@@ -99,15 +100,35 @@ public class CartaController {
         LocalDateTime momento;
         try {
             momento = LocalDateTime.parse(momentoString, formatter);
-            service.cartasPorMomentos(momento);
+            List<Carta> cartas = service.cartasPorMomentos(momento);
+            if (cartas.isEmpty()) {
+                view.info("No hay cartas para ese momento.");
+                return;
+            }
+            for (Carta c : cartas) {
+                view.info("------------------------------------");
+                view.info("Carta de " + c.getInfante().getNombre() + " desde la ciudad de " + c.getCiudad() + "\n" +
+                        "Momento de entrega: " + c.getMomentoEntrega());
+                for (RegalosPorCarta rpc : c.getRegalos()){
+                    Catalogo regalo = rpc.getRegalo();
+                    view.info("- " + regalo.getNombreRegalo()
+                            + " | Cantidad: " + rpc.getCantidad());
+                }
+                view.info("------------------------------------");
+            }
         } catch (DateTimeParseException e) {
-            throw new ReglaNegocioExcepcion("Formato de tiempo no valido, intente de nuevo con dd/MM/yyyy HH:mm:ss");
+            view.error("Formato de tiempo no valido, intente de nuevo con dd/MM/yyyy HH:mm:ss");
+            return;
         }
     }
 
     void regalosPorCiudad() {
         String ciudad = view.pedirString("Ciudad a buscar");
         List<Carta> cartas = service.cartasPorCiudad(ciudad);
+        if (cartas.isEmpty()) {
+            view.info("No hay cartas para esta ciudad.");
+            return;
+        }
         for (Carta c : cartas) {
             view.info("------------------------------------");
             view.info("Carta de " + c.getInfante().getNombre() + " desde la ciudad de " + c.getCiudad() + "\n");

@@ -137,7 +137,7 @@ public class CatalogoService {
         EntityManager em = emf.createEntityManager();
         try {
             CatalogoRepository repo = new CatalogoRepository(em);
-            return repo.buscarTodosRegalosNoPedidos();
+            return repo.buscarTodosRegalosCatalogo();
         } finally {
             em.close();
         }

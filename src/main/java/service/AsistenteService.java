@@ -15,15 +15,19 @@ public class AsistenteService {
     }
 
     public Asistente crear(String nombre) {
-        if (nombre != null && !nombre.isBlank()) {
+        if (nombre != null && nombre.isBlank()) {
             throw new ReglaNegocioExcepcion("El nombre es obligatorio");
         }
-        Asistente asistente = new Asistente();
+        Asistente asistente = new Asistente(nombre);
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
             AsistenteRepository repo = new AsistenteRepository(em);
+            Asistente existe = repo.buscar(nombre);
+            if (existe != null) {
+                throw new ReglaNegocioExcepcion("Ya existe un asistente con ese nombre");
+            }
             repo.guardar(asistente);
             tx.commit();
             return asistente;
@@ -38,7 +42,7 @@ public class AsistenteService {
         }
     }
     public boolean borrar(String nombre) {
-        if (nombre != null && !nombre.isBlank()) {
+        if (nombre != null && nombre.isBlank()) {
             throw new ReglaNegocioExcepcion("El nombre es obligatorio");
         }
         EntityManager em = emf.createEntityManager();

@@ -4,6 +4,8 @@ import entity.Catalogo;
 import service.CatalogoService;
 import view.ConsolaView;
 
+import java.util.List;
+
 public class CatalogoController {
     private final ConsolaView view;
     private final CatalogoService service;
@@ -44,12 +46,30 @@ public class CatalogoController {
     }
 
     public void regalosNoPedidos() {
-        view.info(service.buscarTodosRegalosNoPedidos().toString());
+        List<Catalogo> regalos = service.buscarTodosRegalosNoPedidos();
+
+        if (regalos.isEmpty()) {
+            view.info("No se encontró ningún regalo no pedido");
+            return;
+        }
+        view.info("Regalos del catálogo que no ha pedido ningún niño:");
+
+        for (Catalogo regalo : regalos) {
+            view.info(regalo.toString());
+        }
     }
 
 
     public void regalosPorTresLetras() {
         String letras = view.pedirString("Introduzca 3 letras a buscar");
-        service.buscarPorTresLetras(letras);
+        List<Catalogo> regalos = service.buscarPorTresLetras(letras);
+        if (regalos.isEmpty()) {
+            view.info("No se encontró ninguna coincidencia");
+            return;
+        }
+        view.info("Regalos con " + letras + ": ");
+        for (Catalogo regalo : regalos) {
+            view.info(regalo.toString());
+        }
     }
 }

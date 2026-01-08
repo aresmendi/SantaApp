@@ -19,7 +19,7 @@ public class Catalogo implements Serializable {
     @Column(name = "edadMinima", nullable = false)
     private int edadMinima;
 
-    @Column(name = "nombreRegalo", length = 100,nullable = false)
+    @Column(name = "nombreRegalo", length = 100, nullable = false)
     private String nombreRegalo;
 
     @Column(name = "descripcion", length = 300, nullable = false)
@@ -75,5 +75,10 @@ public class Catalogo implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    @Override
+    public String toString() {
+        return "Nombre del Regalo: " + nombreRegalo + "\nDescripción del Regalo: " + descripcion + "\nEdad mínima: " + edadMinima;
     }
 }
